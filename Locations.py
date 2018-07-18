@@ -1,3 +1,5 @@
+import csv
+
 ##### Handle Locations #####
 
 class Location(object):
@@ -17,12 +19,19 @@ class Location(object):
 
 def retrieveLocations(filename):
     locations = []
+    filetype = filename.split(".")[-1]
     with open(filename) as file:
-        for i,line in enumerate(file):  
-            if i == 0:
-                continue # ignore the header  
-            location_data = line.split('\t')
-            locationObj = Location(location_data[1], int(location_data[2]), [])
-            locations.append(locationObj)
+        if filetype == "txt":
+            for i,line in enumerate(file):  
+                if i == 0:
+                    continue # ignore the header  
+                location_data = line.split('\t')
+                locationObj = Location(location_data[1], int(location_data[2]), [])
+                locations.append(locationObj)
+        else:
+            data = list(csv.reader(file, delimiter=','))
+            headers = data.pop(0) # remove the header from the data
+            for row in data:
+                locationObj = Location(row[1], int(row[2]), [])
+                locations.append(locationObj)
     return locations
-
